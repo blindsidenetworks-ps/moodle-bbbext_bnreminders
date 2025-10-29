@@ -68,7 +68,7 @@ class send_email_reminders_message extends adhoc_task {
             )->out(false); // A relevant URL for the notification.
             $message->contexturlname = $instance->get_meeting_name();
             // Extra content for specific processor.
-            $unsubscribeurl = subscription_utils::get_unsubscribe_url($cmid, null, $userid);
+            $unsubscribeurl = subscription_utils::get_unsubscribe_url($cmid, $userid);
             $unsubscribemessage = get_string(
                 'emailunsubscribemessage',
                 'bbbext_bnreminders',

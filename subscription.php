@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Get and set subscription status for a user or an email.
+ * Get and set subscription status for a user.
  *
  * @package   bbbext_bnreminders
  * @copyright 2022 onwards, Blindside Networks Inc
@@ -30,21 +30,18 @@ use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 
 require(__DIR__ . '/../../../../config.php');
+require_login();
 global $PAGE, $OUTPUT, $DB, $SITE;
-// Note here that we do not use require_login as the $CFG->forcelogin would prevent
-// guest user from accessing this page.
 $PAGE->set_course($SITE); // Intialise the page and run through the setup.
-$email = optional_param('email', null, PARAM_EMAIL);
-$userid = optional_param('userid', null, PARAM_INT);
+$userid = required_param('userid', PARAM_INT);
 $cmid = required_param('cmid', PARAM_INT);
 $instance = instance::get_from_cmid($cmid);
 if (empty($instance)) {
     throw new moodle_exception('activitynotfound', 'bbbext_bnreminders');
 }
-// Get the guest matching guest access link.
 $PAGE->set_url(
     '/mod/bigbluebuttonbn/extension/bnreminders/subscription.php',
-    ['cmid' => $cmid, 'email' => $email]
+    ['cmid' => $cmid, 'userid' => $userid]
 );
 $title = get_string(
     'unsubscribe:title:meeting',
@@ -55,13 +52,10 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_pagelayout('standard');
 $form = new \bbbext_bnreminders\form\unsubscribe(null);
-$form->set_data(['email' => $email, 'cmid' => $cmid, 'userid' => $userid]);
+$form->set_data(['cmid' => $cmid, 'userid' => $userid]);
 // Specific for the tests: we allow to set the password in the form here.
 if (defined('BEHAT_SITE_RUNNING')) {
     $form->set_data(['password' => optional_param('password', '', PARAM_RAW)]);
-}
-if ($userid) {
-    require_login();
 }
 $formcontent = '';
 $managepreferences = new single_button(
@@ -76,17 +70,11 @@ if ($form->is_cancelled()) {
     }
     notification::add(
         get_string('subscribed:cancel', 'bbbext_bnreminders'),
-        \core\output\notification::NOTIFY_INFO);
-
+        \core\output\notification::NOTIFY_INFO
+    );
 } else if ($data = $form->get_data()) {
     try {
-        if (!empty($data->email)) {
-            subscription_utils::change_reminder_subcription_email(
-                !$data->unsubscribe,
-                $data->email,
-                $instance
-            );
-        } else if (!empty($data->userid)) {
+        if (!empty($data->userid)) {
             subscription_utils::change_reminder_subcription_user(
                 !$data->unsubscribe, // We change this because of how user preferences are set.
                 $data->userid,

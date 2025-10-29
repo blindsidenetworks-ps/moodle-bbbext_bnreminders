@@ -73,7 +73,6 @@ class mod_form_addons extends \mod_bigbluebuttonbn\local\extension\mod_form_addo
         }
         $bnremindersrecord = $DB->get_record(mod_instance_helper::SUBPLUGIN_TABLE, ['bigbluebuttonbnid' => $id]);
         $data["bnreminders_reminderenabled"] = $bnremindersrecord->reminderenabled ?? false;
-        $data["bnreminders_remindertoguestsenabled"] = $bnremindersrecord->remindertoguestsenabled ?? false;
         $data["bnreminders_id"] = $bnremindersrecord->id ?? 0;
         return $data;
     }
@@ -205,17 +204,13 @@ class mod_form_addons extends \mod_bigbluebuttonbn\local\extension\mod_form_addo
         $this->mform->addElement('static', 'bnreminders_desc', '', get_string('mod_form_bnreminders_desc', 'bbbext_bnreminders'));
 
         $this->mform->addHelpButton('bnreminders', 'bnreminders', 'bbbext_bnreminders');
-        $this->mform->addElement('advcheckbox', 'bnreminders_reminderenabled',
-            get_string('bnreminders:enabled', 'bbbext_bnreminders'));
+        $this->mform->addElement(
+            'advcheckbox',
+            'bnreminders_reminderenabled',
+            get_string('bnreminders:enabled', 'bbbext_bnreminders')
+        );
         $this->mform->disabledIf('bnreminders_reminderenabled', 'openingtime[enabled]', 'notchecked', 0);
         $this->mform->setType('bnreminders_reminderenabled', PARAM_BOOL);
-
-        $this->mform->addElement('advcheckbox', 'bnreminders_remindertoguestsenabled',
-            get_string('bnreminders:guestenabled', 'bbbext_bnreminders'));
-        $this->mform->disabledIf('bnreminders_remindertoguestsenabled', 'guestallowed', 'notchecked', 0);
-        $this->mform->disabledIf('bnreminders_remindertoguestsenabled', 'openingtime[enabled]', 'notchecked', 0);
-        $this->mform->hideIf('bnreminders_remindertoguestsenabled', 'bnreminders_reminderenabled', 'notchecked', 0);
-        $this->mform->setType('bnreminders_remindertoguestsenabled', PARAM_BOOL);
 
         $paramcount = optional_param(
             'bnreminders_paramcount',

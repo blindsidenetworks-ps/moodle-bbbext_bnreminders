@@ -72,7 +72,6 @@ final class mod_instance_helper_test extends \advanced_testcase {
         $data = $bbbinstance->get_instance_data();
         $data->bnreminders_openingtime = time();
         $data->bnreminders_reminderenabled = true;
-        $data->bnreminders_remindertoguestsenabled = true;
         $data->bnreminders_paramcount = 3;
         $data->bnreminders_timespan = ['PT1H', 'PT2H', 'PT1D'];
         $synparametersref->invokeArgs($modinstancehelper, [$data]);

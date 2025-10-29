@@ -33,7 +33,6 @@ use templatable;
  * @author    Laurent David (laurent@call-learning.fr)
  */
 class subscriptions implements renderable, templatable {
-
     /** @var int */
     protected $userid;
 

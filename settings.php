@@ -41,7 +41,8 @@ $textfield = new admin_setting_configtext(
 );
 $settings->add($textfield);
 // Text area with editor for the email template.
-$emailtemplateeditor = new admin_setting_confightmleditor('bbbext_bnreminders/emailtemplate',
+$emailtemplateeditor = new admin_setting_confightmleditor(
+    'bbbext_bnreminders/emailtemplate',
     new lang_string('emailtemplate', 'bbbext_bnreminders'),
     new lang_string('emailtemplate:desc', 'bbbext_bnreminders'),
     new lang_string('emailtemplate:default', 'bbbext_bnreminders'),
@@ -49,7 +50,8 @@ $emailtemplateeditor = new admin_setting_confightmleditor('bbbext_bnreminders/em
 );
 $settings->add($emailtemplateeditor);
 // Text area with editor for additional footer information.
-$emailfootereditor = new admin_setting_confightmleditor('bbbext_bnreminders/emailfooter',
+$emailfootereditor = new admin_setting_confightmleditor(
+    'bbbext_bnreminders/emailfooter',
     new lang_string('emailfooter', 'bbbext_bnreminders'),
     new lang_string('emailfooter:desc', 'bbbext_bnreminders'),
     '',

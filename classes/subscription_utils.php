@@ -16,7 +16,6 @@
 
 namespace bbbext_bnreminders;
 
-use bbbext_bnreminders\local\persistent\guest_email;
 use core_user;
 use moodle_url;
 use mod_bigbluebuttonbn\instance;
@@ -31,7 +30,7 @@ use mod_bigbluebuttonbn\instance;
  */
 class subscription_utils {
     /**
-     * Unsubscribe reminder for a user and a meeting or all meetings.
+     * Updates reminder preferences for a given user and a meeting or all meetings.
      *
      * @param bool $status
      * @param int $userid
@@ -49,44 +48,6 @@ class subscription_utils {
             $userprefs[$instance->get_instance_id()] = $status;
             set_user_preference('bbbext_bnreminders', json_encode($userprefs), $user->id);
         }
-    }
-
-    /**
-     * Unsubscribe reminder for a given email and a meeting or all meetings.
-     *
-     * @param bool $status true if user has indicated to unsubscribe, false when subscribed
-     * @param string $email
-     * @param instance $instance
-     * @return void
-     */
-    public static function change_reminder_subcription_email(bool $status, string $email, instance $instance): void {
-        $selector = [
-            'email' => $email,
-            'bigbluebuttonbnid' => $instance->get_instance_id(),
-        ];
-        $guestemails = guest_email::get_records($selector);
-        foreach ($guestemails as $guestemail) {
-            $guestemail->set('isenabled', $status ? 1 : 0);
-            $guestemail->update();
-        }
-    }
-
-    /**
-     * Get reminder subscription status for a given user and a meeting.
-     *
-     * @param string $email
-     * @param instance $instance
-     * @return bool
-     */
-    public static function is_user_email_subscribed(string $email, instance $instance): bool {
-        $guestemail = guest_email::get_record([
-            'email' => $email,
-            'bigbluebuttonbnid' => $instance->get_instance_id(),
-        ]);
-        if (empty($guestemail)) {
-            return false;
-        }
-        return !empty($guestemail) && $guestemail->get('isenabled');
     }
 
     /**
@@ -113,12 +74,11 @@ class subscription_utils {
      * Get unsubscribe URL
      *
      * @param int|null $cmid
-     * @param string|null $email
      * @param int|null $userid
      * @return moodle_url
      */
-    public static function get_unsubscribe_url(?int $cmid, ?string $email = null, ?int $userid = null): moodle_url {
-        $params = ['email' => $email, 'userid' => $userid, 'cmid' => $cmid];
+    public static function get_unsubscribe_url(?int $cmid, ?int $userid = null): moodle_url {
+        $params = ['userid' => $userid, 'cmid' => $cmid];
         $params = array_filter($params, fn($value) => !is_null($value));
         return new moodle_url('/mod/bigbluebuttonbn/extension/bnreminders/subscription.php', $params);
     }

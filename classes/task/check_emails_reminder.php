@@ -17,7 +17,6 @@
 namespace bbbext_bnreminders\task;
 
 use bbbext_bnreminders\bigbluebuttonbn\mod_instance_helper;
-use bbbext_bnreminders\local\persistent\guest_email;
 use bbbext_bnreminders\subscription_utils;
 use bbbext_bnreminders\utils;
 use core\task\scheduled_task;
@@ -27,7 +26,7 @@ use DateTime;
 use mod_bigbluebuttonbn\instance;
 
 /**
- * This adhoc task will send emails to guest users with the meeting's details
+ * This adhoc task will send emails to users with the meeting's details
  *
  * @package   bbbext_bnreminders
  * @copyright 2024 onwards, Blindside Networks Inc
@@ -111,35 +110,6 @@ class check_emails_reminder extends scheduled_task {
                             ]
                         );
                         \core\task\manager::queue_adhoc_task($emailreminder);
-                    }
-                    if (!empty($instancereminder->remindertoguestsenabled)) {
-                        $guestemails =
-                            guest_email::get_records(['bigbluebuttonbnid' => $instance->get_instance_id(), 'isenabled' => true]);
-                        $allemails = [];
-                        foreach ($guestemails as $guestemail) {
-                            $email = $guestemail->get('email');
-                            if (!subscription_utils::is_user_email_subscribed($email, $instance)) {
-                                continue;
-                            }
-                            $allemails[] = $guestemail->get('email');
-                        }
-                        sort($allemails);
-                        // Do it in batch.
-                        $alluseremails = count($allemails);
-                        for ($i = 0; $i < $alluseremails; $i += self::MAX_EMAIL_PER_TASK) {
-                            $emailreminder = new send_email_reminders();
-                            $emailreminder->set_custom_data(
-                                [
-                                    'emails' => array_slice($allemails, $i, 100),
-                                    'instanceid' => $instance->get_instance_id(),
-                                    'reminderid' => $reminder->id,
-                                    'subject' => $emailsubject,
-                                    'htmlmessage' => $emailhtmlmessage,
-                                    'emailfooter' => $emailfooter,
-                                ]
-                            );
-                            \core\task\manager::queue_adhoc_task($emailreminder);
-                        }
                     }
                     $DB->set_field(mod_instance_helper::SUBPLUGIN_REMINDERS_TABLE, 'lastsent', time(), ['id' => $reminder->id]);
                 }
@@ -228,5 +198,4 @@ class check_emails_reminder extends scheduled_task {
         );
         return $emailcontent;
     }
-
 }

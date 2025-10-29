@@ -30,7 +30,6 @@ use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 
 require(__DIR__ . '/../../../../config.php');
-// Get the guest matching guest access link.
 require_login();
 global $PAGE, $OUTPUT, $USER;
 $PAGE->set_context(context_user::instance($USER->id));
@@ -62,7 +61,6 @@ if (!empty($cmid) && !is_null($state)) {
         );
         notification::add($message, notification::SUCCESS);
     }
-
 }
 echo $OUTPUT->render($subscriptions);
 echo $OUTPUT->footer();

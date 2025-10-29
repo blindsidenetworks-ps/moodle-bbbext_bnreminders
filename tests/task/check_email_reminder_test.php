@@ -74,46 +74,6 @@ final class check_email_reminder_test extends \advanced_testcase {
     }
 
     /**
-     * Data provider for test_reminder_guest_sent.
-     *
-     * @return array[]
-     */
-    public static function reminder_enabled_with_guest_sent_provider(): array {
-        return [
-            '1 Hour before' => [
-                'reminderinterval' => utils::ONE_HOUR,
-                'openingtimespan' => 'PT1H',
-                'guests' => ['guest@email.com'],
-                'expectedemails' => [
-                    'guest@email.com',
-                    'username2@example.com',
-                    'username3@example.com',
-                    'teacher@example.com',
-                ],
-                'nosubscriptions' => ['username1@example.com'],
-            ],
-            '1 Day before' => [
-                'reminderinterval' => utils::ONE_HOUR,
-                'openingtimespan' => 'P1D',
-                'guests' => ['guest@email.com'],
-                'expectedemails' => [],
-            ],
-            '1 Hour before guest unsubscribed' => [
-                'reminderinterval' => utils::ONE_HOUR,
-                'openingtimespan' => 'PT1H',
-                'guests' => ['guest@email.com'],
-                'expectedemails' => [
-                    'username1@example.com',
-                    'username2@example.com',
-                    'username3@example.com',
-                    'teacher@example.com',
-                ],
-                'nosubscriptions' => ['guest@email.com'],
-            ],
-        ];
-    }
-
-    /**
      * Set up test.
      */
     public function setUp(): void {
@@ -133,7 +93,9 @@ final class check_email_reminder_test extends \advanced_testcase {
 
         for ($i = 1; $i < 4; $i++) {
             $this->students[] = $generator->create_and_enrol(
-                $course, 'student', ['email' => 'username' . $i . '@example.com', 'username' => 'username' . $i]
+                $course,
+                'student',
+                ['email' => 'username' . $i . '@example.com', 'username' => 'username' . $i]
             );
         }
         $this->teacher =
@@ -181,73 +143,11 @@ final class check_email_reminder_test extends \advanced_testcase {
         $task->execute(); // Execute twice so we can test that the email is sent only once.
         $this->runAdhocTasks();
         $this->assertEquals(count($expectedemails), $emailsink->count());
-        $emailsto = array_map(function($email) {
+        $emailsto = array_map(function ($email) {
             return $email->to;
         }, $emailsink->get_messages());
         sort($expectedemails);
         sort($emailsto);
         $this->assertEquals($expectedemails, $emailsto);
     }
-
-    /**
-     * Test that reminder when reminder is enabled the email is sent.
-     *
-     * @param string $reminderinterval
-     * @param string $openingtimespan
-     * @param array $guests
-     * @param array $expectedemails
-     * @param ?array $nosubscriptions = []
-     * @return void
-     * @dataProvider reminder_enabled_with_guest_sent_provider
-     * @covers ::execute
-     */
-    public function test_reminder_guest_sent(
-        string $reminderinterval,
-        string $openingtimespan,
-        array $guests,
-        array $expectedemails,
-        ?array $nosubscriptions = []
-    ): void {
-        global $DB;
-        $emailsink = $this->redirectEmails();
-        $bnremindersgenerator = $this->getDataGenerator()->get_plugin_generator('bbbext_bnreminders');
-        $bnremindersgenerator->enable_reminder($this->bbbinstance->get_instance_id());
-        foreach ($guests as $guest) {
-            $bnremindersgenerator->add_guest([
-                'bigbluebuttonbnid' => $this->bbbinstance->get_instance_id(),
-                'email' => $guest,
-            ]);
-        }
-        $bnremindersgenerator->enable_reminder_for_guest($this->bbbinstance->get_instance_id());
-        $bnremindersgenerator->add_reminder([
-            'bigbluebuttonbnid' => $this->bbbinstance->get_instance_id(),
-            'timespan' => $reminderinterval,
-        ]);
-        $time = new DateTime("now", core_date::get_user_timezone_object());
-        $time->add(new DateInterval($openingtimespan));
-        $DB->set_field('bigbluebuttonbn', 'openingtime', $time->getTimestamp(), ['id' => $this->bbbinstance->get_instance_id()]);
-        foreach ($this->students as $student) {
-            if (in_array($student->email, $nosubscriptions)) {
-                subscription_utils::change_reminder_subcription_user(false, $student->id, $this->bbbinstance);
-            }
-        }
-        foreach ($guests as $guestemail) {
-            if (in_array($guestemail, $nosubscriptions)) {
-                subscription_utils::change_reminder_subcription_email(false, $guestemail, $this->bbbinstance);
-            }
-        }
-
-        $task = new check_emails_reminder();
-        $task->execute();
-        $task->execute(); // Execute twice so we can test that the email is sent only once.
-        $this->runAdhocTasks();
-        $this->assertEquals(count($expectedemails), $emailsink->count());
-        $emailsto = array_map(function($email) {
-            return $email->to;
-        }, $emailsink->get_messages());
-        sort($expectedemails);
-        sort($emailsto);
-        $this->assertEquals($expectedemails, $emailsto);
-    }
-
 }

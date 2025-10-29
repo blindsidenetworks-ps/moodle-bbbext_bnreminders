@@ -28,7 +28,6 @@ $string['activitynotfound'] = 'Activity not found';
 $string['addreminder'] = 'Add reminder';
 $string['bnreminders'] = 'Send email reminders before the session starts';
 $string['bnreminders:enabled'] = 'Send email reminders before session';
-$string['bnreminders:guestenabled'] = 'Add guests to the list of users to send the reminder to';
 $string['bnreminders:preferences'] = 'BigBlueButton reminders preferences';
 $string['bnreminders_help'] = 'If enabled and a start date is set, send email reminders for users registered to the activity';
 $string['check_emails_reminder'] = 'Check emails reminder';

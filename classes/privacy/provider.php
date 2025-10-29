@@ -33,7 +33,6 @@ class provider implements
     \core_privacy\local\metadata\provider,
     // This plugin has user preferences to export.
     \core_privacy\local\request\user_preference_provider {
-
     /**
      * Provides metadata about the personal data stored by the plugin.
      *
@@ -41,8 +40,10 @@ class provider implements
      * @return collection The updated metadata collection.
      */
     public static function get_metadata(collection $collection): collection {
-        $collection->add_user_preference('bbbext_bnreminders',
-            'privacy:metadata:preference:bbbext_bnreminders');
+        $collection->add_user_preference(
+            'bbbext_bnreminders',
+            'privacy:metadata:preference:bbbext_bnreminders'
+        );
         return $collection;
     }
 
@@ -60,8 +61,12 @@ class provider implements
                 $userprefdescription = get_string($preference, 'bbbext_bnreminders', ['activityid' => $bbbinstanceid]);
                 $desc .= $userprefdescription . " ";
             }
-            writer::export_user_preference('bbbext_bnreminders', 'bbbext_bnreminders', $userpref,
-                rtrim($desc));
+            writer::export_user_preference(
+                'bbbext_bnreminders',
+                'bbbext_bnreminders',
+                $userpref,
+                rtrim($desc)
+            );
         }
     }
 }

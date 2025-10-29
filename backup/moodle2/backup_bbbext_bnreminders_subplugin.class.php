@@ -36,33 +36,18 @@ class backup_bbbext_bnreminders_subplugin extends backup_subplugin {
         $subpluginelementmain = new backup_nested_element(
             'bbbext_bnreminders',
             null,
-            ['reminderenabled', 'remindertoguestsenabled']
+            ['reminderenabled']
         );
         $subpluginelementreminder = new backup_nested_element(
             'bbbext_bnreminders_rem',
             null,
             ['timespan', 'lastsent']
         );
-        $subpluginelementguest = new backup_nested_element(
-            'bbbext_bnreminders_guests',
-            ['id'],
-            [
-                'bigbluebuttonbnid',
-                'email',
-                'userfrom',
-                'issent',
-                'isenabled',
-                'usermodified',
-                'timemodified',
-                'timecreated',
-            ]
-        );
 
         // Connect XML elements into the tree.
         $subplugin->add_child($subpluginwrapper);
         $subpluginwrapper->add_child($subpluginelementmain);
         $subpluginwrapper->add_child($subpluginelementreminder);
-        $subpluginwrapper->add_child($subpluginelementguest);
 
         // Set source to populate the data.
         $subpluginelementmain->set_source_table(
@@ -74,15 +59,6 @@ class backup_bbbext_bnreminders_subplugin extends backup_subplugin {
             ['bigbluebuttonbnid' => backup::VAR_PARENTID]
         );
 
-        // To know if we are including userinfo.
-        $userinfo = $this->get_setting_value('userinfo');
-        // This source definition only happen if we are including user info.
-        if ($userinfo) {
-            $subpluginelementguest->set_source_table(
-                'bbbext_bnreminders_guests',
-                ['bigbluebuttonbnid' => backup::VAR_PARENTID]
-            );
-        }
         return $subplugin;
     }
 }

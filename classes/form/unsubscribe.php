@@ -20,7 +20,7 @@ global $CFG;
 require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Guest login form.
+ * User unsubscription form.
  *
  * @package   bbbext_bnreminders
  * @copyright 2024 onwards, Blindside Networks Inc
@@ -34,8 +34,6 @@ class unsubscribe extends \moodleform {
     protected function definition() {
 
         $mform = $this->_form;
-        $mform->addElement('hidden', 'email');
-        $mform->setType('email', PARAM_EMAIL);
         $mform->addElement('hidden', 'userid');
         $mform->setType('userid', PARAM_INT);
         $mform->addElement('hidden', 'cmid');

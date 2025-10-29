@@ -68,26 +68,6 @@ class bbbext_bnreminders_generator extends \component_generator_base {
     }
 
     /**
-     * Enable reminder.
-     *
-     * @param int $bbbinstanceid
-     * @return void
-     */
-    public function enable_reminder_for_guest(int $bbbinstanceid): void {
-        global $DB;
-        $existingreminder = $DB->get_record(mod_instance_helper::SUBPLUGIN_TABLE, ['bigbluebuttonbnid' => $bbbinstanceid]);
-        if ($existingreminder) {
-            $existingreminder->remindertoguestsenabled = 1;
-            $DB->update_record(mod_instance_helper::SUBPLUGIN_TABLE, $existingreminder);
-        } else {
-            $reminder = new stdClass();
-            $reminder->bigbluebuttonbnid = $bbbinstanceid;
-            $reminder->remindertoguestsenabled = 1;
-            $DB->insert_record(mod_instance_helper::SUBPLUGIN_TABLE, $reminder);
-        }
-    }
-
-    /**
      * Add reminder for instance
      *
      * @param object|array $record
@@ -104,32 +84,5 @@ class bbbext_bnreminders_generator extends \component_generator_base {
         ], $record);
         $reminder->id = $DB->insert_record(mod_instance_helper::SUBPLUGIN_REMINDERS_TABLE, $reminder);
         return $reminder;
-    }
-
-    /**
-     * Add guest email to the instance
-     *
-     * @param object|array $record
-     * @return stdClass
-     * @throws \dml_exception
-     */
-    public function add_guest($record): stdClass {
-        global $DB, $USER;
-        if (is_object($record)) {
-            $record = (array) $record;
-        }
-        $now = time();
-        $guest = (object) array_merge([
-            'userfrom' => $USER->id,
-            'isenabled' => 1,
-            'issent' => 0,
-            'email' => 'randomemail@moodle.com',
-            'usermodified' => $USER->id,
-            'timecreated' => $now,
-            'timemodified' => $now,
-        ], $record);
-
-        $guest->id = $DB->insert_record(mod_instance_helper::SUBPLUGIN_GUESTS_TABLE, $guest);
-        return $guest;
     }
 }

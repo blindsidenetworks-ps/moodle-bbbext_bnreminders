@@ -36,10 +36,6 @@ class mod_instance_helper extends \mod_bigbluebuttonbn\local\extension\mod_insta
      * This is the name of the table that will be used to store reminders.
      */
     const SUBPLUGIN_REMINDERS_TABLE = 'bbbext_bnreminders_rem';
-    /**
-     * This is the name of the table that will be used to store guests.
-     */
-    const SUBPLUGIN_GUESTS_TABLE = 'bbbext_bnreminders_guests';
 
     /**
      * Runs any processes that must run before a bigbluebuttonbn insert/update.
@@ -82,21 +78,6 @@ class mod_instance_helper extends \mod_bigbluebuttonbn\local\extension\mod_insta
                 $bigbluebuttonbn->bnreminders_reminderenabled,
                 PARAM_BOOL
             ) != $bigbluebuttonbn->bnreminders_reminderenabled
-        ) {
-            if (
-                !(defined('PHPUNIT_TEST') && PHPUNIT_TEST)
-                && !defined('BEHAT_SITE_RUNNING')
-            ) {
-                debugging('bnreminders : The enabled type contains invalid value.');
-            }
-            return;
-        }
-        if (
-            !isset($bigbluebuttonbn->bnreminders_remindertoguestsenabled)
-            || clean_param(
-                $bigbluebuttonbn->bnreminders_remindertoguestsenabled,
-                PARAM_BOOL
-            ) != $bigbluebuttonbn->bnreminders_remindertoguestsenabled
         ) {
             if (
                 !(defined('PHPUNIT_TEST') && PHPUNIT_TEST)
@@ -165,7 +146,6 @@ class mod_instance_helper extends \mod_bigbluebuttonbn\local\extension\mod_insta
         );
         if ($existingrecord) {
             $existingrecord->reminderenabled = $bigbluebuttonbn->bnreminders_reminderenabled ?? false;
-            $existingrecord->remindertoguestsenabled = $bigbluebuttonbn->bnreminders_remindertoguestsenabled ?? false;
             $DB->update_record(
                 self::SUBPLUGIN_TABLE,
                 $existingrecord
@@ -176,7 +156,6 @@ class mod_instance_helper extends \mod_bigbluebuttonbn\local\extension\mod_insta
                 [
                     'bigbluebuttonbnid' => $bigbluebuttonbn->id,
                     'reminderenabled' => $bigbluebuttonbn->bnreminders_reminderenabled ?? false,
-                    'remindertoguestsenabled' => $bigbluebuttonbn->bnreminders_remindertoguestsenabled ?? false,
                 ]
             );
         }

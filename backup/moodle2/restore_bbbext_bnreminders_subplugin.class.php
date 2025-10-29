@@ -41,6 +41,7 @@ class restore_bbbext_bnreminders_subplugin extends restore_subplugin {
         $elepath = $this->get_pathfor('/bbbext_bnreminders_rem');
         $paths[] = new restore_path_element($elename, $elepath);
 
+        // Legacy support: keep the path so old backups are accepted.
         $elename = $this->get_namefor('guests');
         // We used get_recommended_name() so this works.
         $elepath = $this->get_pathfor('/bbbext_bnreminders_guests');
@@ -56,18 +57,6 @@ class restore_bbbext_bnreminders_subplugin extends restore_subplugin {
      * @return void
      */
     public function process_bbbext_bnreminders_guests(array $data) {
-        global $DB;
-        $data = (object) $data;
-        // Apply modifications.
-        $data->bigbluebuttonbnid = $this->get_new_parentid('bigbluebuttonbn');
-        $data->usermodified = $this->get_mappingid('user', $data->usermodified);
-        $data->userfrom = $this->get_mappingid('user', $data->userfrom);
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-        // Insert the bigbluebuttonbn_logs record.
-        $newitemid = $DB->insert_record('bbbext_bnreminders_guests', $data);
-        // Immediately after inserting associated record, call this.
-        $this->set_mapping('bbbext_bnreminders_guests', $data->id, $newitemid);
     }
 
     /**

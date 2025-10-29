@@ -26,7 +26,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025100600;
+$plugin->version   = 2025101500;
 $plugin->requires  = 2024100700;
 $plugin->component = 'bbbext_bnreminders';
 $plugin->maturity = MATURITY_STABLE;

@@ -22,7 +22,6 @@
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use bbbext_bnreminders\local\persistent\guest_email;
 use bbbext_bnreminders\subscription_utils;
 use bbbext_bnreminders\utils;
 
@@ -121,20 +120,4 @@ function bbbext_bnreminders_extend_navigation_user_settings(
         ),
         new moodle_url('/mod/bigbluebuttonbn/extension/bnreminders/managesubscriptions.php')
     );
-}
-
-/**
- * Get the list of emails to add to the meeting
- *
- * This is a dummy callback used to demonstrate how to add a new setting to the BigBlueButtonBN settings page.
- *
- * @param array $emails
- * @param int $instanceid
- * @return void
- */
-function bbbext_bnreminders_meeting_add_guests(array $emails, int $instanceid): void {
-    global $USER;
-    foreach ($emails as $email) {
-        guest_email::create_guest_mail_record($email, $instanceid, $USER->id);
-    }
 }
