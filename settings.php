@@ -24,6 +24,17 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+$plugins = \core_plugin_manager::instance()->get_installed_plugins('bbbext');
+$bnxversion = (int)($plugins['bnx'] ?? 0);
+
+if ($bnxversion >= 2026040100) {
+    $settings->add(new admin_setting_heading(
+        'bbbext_bnreminders/deprecation_notice',
+        get_string('deprecation_notice_heading', 'bbbext_bnreminders'),
+        get_string('deprecation_notice_desc', 'bbbext_bnreminders')
+    ));
+}
+
 // Content settings.
 $settings->add(new admin_setting_heading(
     'bbbext_bnreminders/emailcontent',
