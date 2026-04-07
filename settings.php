@@ -26,8 +26,10 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugins = \core_plugin_manager::instance()->get_installed_plugins('bbbext');
 $bnxversion = (int)($plugins['bnx'] ?? 0);
+$bnxplugin = \core_plugin_manager::instance()->get_plugin_info('bbbext_bnx');
+$bnxenabled = $bnxplugin && $bnxplugin->is_enabled();
 
-if ($bnxversion >= 2026040100) {
+if ($bnxversion >= 2026040100 && $bnxenabled) {
     $settings->add(new admin_setting_heading(
         'bbbext_bnreminders/deprecation_notice',
         get_string('deprecation_notice_heading', 'bbbext_bnreminders'),

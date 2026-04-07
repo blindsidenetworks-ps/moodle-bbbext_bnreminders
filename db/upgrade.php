@@ -35,7 +35,7 @@ function xmldb_bbbext_bnreminders_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2025101500) {
+    if ($oldversion < 2025100500) {
         // Define field remindertoguestsenabled to be dropped from bbbext_bnreminders.
         $table = new xmldb_table('bbbext_bnreminders');
         $field = new xmldb_field('remindertoguestsenabled');
@@ -54,7 +54,7 @@ function xmldb_bbbext_bnreminders_upgrade($oldversion) {
         }
 
         // BN reminders savepoint reached.
-        upgrade_plugin_savepoint(true, 2025101500, 'bbbext', 'bnreminders');
+        upgrade_plugin_savepoint(true, 2025100500, 'bbbext', 'bnreminders');
     }
     return true;
 }

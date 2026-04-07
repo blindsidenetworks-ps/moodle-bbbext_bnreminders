@@ -33,8 +33,11 @@ class plugininfo_callbacks {
     public static function on_enable(): void {
         $plugins = \core_plugin_manager::instance()->get_installed_plugins('bbbext');
         $bnxversion = (int)($plugins['bnx'] ?? 0);
+        $bnxplugin = \core_plugin_manager::instance()->get_plugin_info('bbbext_bnx');
+        $bnxenabled = $bnxplugin && $bnxplugin->is_enabled();
 
-        if ($bnxversion < 2026040100) {
+        // Block only while BNX baseline is present and actively enabled.
+        if ($bnxversion < 2026040100 || !$bnxenabled) {
             return;
         }
 
